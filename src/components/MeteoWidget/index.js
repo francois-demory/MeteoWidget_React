@@ -18,8 +18,8 @@ export default function MeteoWidget() {
   const [coord, setCoord] = useState({});
   const [city, setCity] = useState('Montpellier');
 
-  useEffect(() => {
-    meteoWidgetApi.getWeather(city)
+  const fetchMeteo = (searchedCity) => {
+    meteoWidgetApi.getWeather(searchedCity)
       .then((response) => {
         setTemperature(Math.round(response.data.main.temp));
         setMinTemp(Math.round(response.data.main.temp_min));
@@ -31,6 +31,10 @@ export default function MeteoWidget() {
         setCoord(response.data.coord);
       })
       .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    fetchMeteo(city);
   }, []);
 
   const handleClick = (e) => {
@@ -44,18 +48,7 @@ export default function MeteoWidget() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    meteoWidgetApi.getWeather(city)
-      .then((response) => {
-        setTemperature(Math.round(response.data.main.temp));
-        setMinTemp(Math.round(response.data.main.temp_min));
-        setMaxTemp(Math.round(response.data.main.temp_max));
-        setIcon(response.data.weather[0].icon);
-        setHumidity(response.data.main.humidity);
-        setPressure(response.data.main.pressure);
-        setWind(response.data.wind.speed);
-        setCoord(response.data.coord);
-      })
-      .catch((error) => console.error(error));
+    fetchMeteo(city);
   };
 
   return (
