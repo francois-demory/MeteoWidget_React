@@ -17,8 +17,10 @@ export default function MeteoWidget() {
   const [wind, setWind] = useState(0);
   const [coord, setCoord] = useState({});
   const [city, setCity] = useState('Montpellier');
+  const [error, setError] = useState(null);
 
   const fetchMeteo = (searchedCity) => {
+    setError(false);
     meteoWidgetApi.getWeather(searchedCity)
       .then((response) => {
         setTemperature(Math.round(response.data.main.temp));
@@ -30,7 +32,9 @@ export default function MeteoWidget() {
         setWind(response.data.wind.speed);
         setCoord(response.data.coord);
       })
-      .catch((error) => console.error(error));
+      .catch(() => {
+        setError(!error);
+      });
   };
 
   useEffect(() => {
@@ -43,6 +47,7 @@ export default function MeteoWidget() {
   };
 
   const handleChange = (e) => {
+    setError(false);
     setCity(e.target.value);
   };
 
@@ -61,8 +66,9 @@ export default function MeteoWidget() {
                 className="meteo__infos__form__city"
                 type="text"
                 placeholder="Search..."
-                value={city}
+                value={error ? 'Erreur' : city}
                 onChange={handleChange}
+                maxLength="30"
               />
               <button className="meteo__infos__form__submit" type="submit">Chercher</button>
             </form>
