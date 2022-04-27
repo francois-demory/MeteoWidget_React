@@ -3,11 +3,10 @@ import MoreInfo from 'src/components/MoreInfo';
 import Button from 'src/components/Button';
 
 import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 
 import './styles.scss';
 
-export default function MeteoWidget({ city, code }) {
+export default function MeteoWidget() {
   const [temperature, setTemperature] = useState(0);
   const [minTemp, setMinTemp] = useState(0);
   const [maxTemp, setMaxTemp] = useState(0);
@@ -17,9 +16,10 @@ export default function MeteoWidget({ city, code }) {
   const [pressure, setPressure] = useState(0);
   const [wind, setWind] = useState(0);
   const [coord, setCoord] = useState({});
+  const [city, setCity] = useState('Montpellier');
 
   useEffect(() => {
-    meteoWidgetApi.getWeather(code)
+    meteoWidgetApi.getWeather(city)
       .then((response) => {
         setTemperature(Math.round(response.data.main.temp));
         setMinTemp(Math.round(response.data.main.temp_min));
@@ -38,15 +38,41 @@ export default function MeteoWidget({ city, code }) {
     setMoreInfo(!moreInfo);
   };
 
+  const handleChange = (e) => {
+    setCity(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    meteoWidgetApi.getWeather(city)
+      .then((response) => {
+        setTemperature(Math.round(response.data.main.temp));
+        setMinTemp(Math.round(response.data.main.temp_min));
+        setMaxTemp(Math.round(response.data.main.temp_max));
+        setIcon(response.data.weather[0].icon);
+        setHumidity(response.data.main.humidity);
+        setPressure(response.data.main.pressure);
+        setWind(response.data.wind.speed);
+        setCoord(response.data.coord);
+      })
+      .catch((error) => console.error(error));
+  };
+
   return (
     <div>
       <article className="meteo">
         <div className="meteo__container">
           <div className="meteo__infos">
-            <div className="meteo__infos__header">
-              <h3 className="meteo__infos__header__city">{city}</h3>
-              <p className="meteo__infos__header__code">{code}</p>
-            </div>
+            <form className="meteo__infos__form" onSubmit={handleSubmit}>
+              <input
+                className="meteo__infos__form__city"
+                type="text"
+                placeholder="Search..."
+                value={city}
+                onChange={handleChange}
+              />
+              <button className="meteo__infos__form__submit" type="submit">Chercher</button>
+            </form>
             <p className="meteo__infos__temperature">{temperature}°</p>
           </div>
           <div className="meteo__temps">
@@ -72,8 +98,3 @@ export default function MeteoWidget({ city, code }) {
 
   );
 }
-
-MeteoWidget.propTypes = {
-  city: PropTypes.string.isRequired,
-  code: PropTypes.number.isRequired,
-};
