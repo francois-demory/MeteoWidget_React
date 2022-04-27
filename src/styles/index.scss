@@ -1,0 +1,12 @@
+@use 'reset';
+@use 'vars';
+
+body {
+  height: 100vh;
+  font-family: vars.$main-font;
+  background-color: #162532;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}

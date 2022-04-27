@@ -1,0 +1,20 @@
+.button {
+  border: none;
+  background-color: white;
+  width: 150px;
+  position: absolute;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  text-align: center;
+  font-size: .8rem;
+  padding: .2rem 2rem;
+  top: 86px;
+  left: -86px;
+  transform: rotate(90deg);
+  transition: all .3s ease-in-out;
+
+  &:hover {
+    background-color: #2f475d;
+    color: white;
+  }
+}
